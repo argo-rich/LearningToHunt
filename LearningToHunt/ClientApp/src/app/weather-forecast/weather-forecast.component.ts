@@ -23,7 +23,6 @@ export class WeatherForecastComponent implements OnInit {
     this.forecastService.getForecasts().subscribe(forecasts => {
       this.forecasts = forecasts;
     });
-  }
-  
+  }  
 
 }
