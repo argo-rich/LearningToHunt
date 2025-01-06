@@ -5,7 +5,11 @@ const string corsPolicyName = "allowWasmClient";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddLearningToHuntContext("server=127.0.0.1;uid=root;pwd=MmtU9YtwKzj4jAh156ON;database=learning_to_hunt");
+string mysqlServer = Environment.GetEnvironmentVariable("L2H_MYSQL_SVR")!;
+string mysqlUser = Environment.GetEnvironmentVariable("L2H_MYSQL_U")!;
+string mysqlPwd = Environment.GetEnvironmentVariable("L2H_MYSQL_W")!;
+string mysqlDb = Environment.GetEnvironmentVariable("L2H_MYSQL_D")!;
+builder.Services.AddLearningToHuntContext($"server={mysqlServer};uid={mysqlUser};pwd={mysqlPwd};database={mysqlDb}");
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddCors(options =>
@@ -15,7 +19,7 @@ builder.Services.AddCors(options =>
       {
           // Allow HTTP calls from the Blazor Web App project.
           policy.AllowAnyHeader();
-          policy.WithOrigins("http://localhost:4200");
+          policy.WithOrigins([Environment.GetEnvironmentVariable("L2H_CLIENT_URL")!]);
       });
 });
 

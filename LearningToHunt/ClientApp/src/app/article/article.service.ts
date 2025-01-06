@@ -5,13 +5,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Article } from '../models/article';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
 
-  private apiURL = "https://localhost:7000/article/";
+  private apiURL = environment.apiBaseUrl + "article/";
 
   constructor(private http: HttpClient) { }
 
