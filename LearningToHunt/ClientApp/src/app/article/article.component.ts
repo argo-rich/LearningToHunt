@@ -33,9 +33,13 @@ export class ArticleComponent implements OnInit {
   ngOnInit(): void {
     const articleId = parseInt(this.route.snapshot.paramMap.get('articleId') || "0");
     if (articleId !== 0) {
-      this.articleService.getArticle(articleId).subscribe(article => {
-        this.article = article;
-      });
+      this.getArticle(articleId);
     }
+  }
+
+  getArticle(articleId: number) {
+    this.articleService.getArticle(articleId).subscribe(article => {
+      this.article = article;
+    });
   }
 }

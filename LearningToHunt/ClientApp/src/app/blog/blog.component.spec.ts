@@ -1,16 +1,17 @@
+//default
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ArticleComponent } from './article.component';
+import { BlogComponent } from './blog.component';
 
-// added imports
+//added
 import { provideHttpClient } from "@angular/common/http";
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { ArticleService } from './article.service';
+import { BlogService } from './blog.service';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs';
-import { Article } from '../models/article';
+import { Blog } from '../models/blog';
 
-let article1: Article = {
-  articleId: 1,
+let blog1: Blog = {
+  blogId: 1,
   title: "Test Blog Title",
   subtitle: "First Blog Subtitle",
   content: "Test blog content.",
@@ -19,8 +20,8 @@ let article1: Article = {
   modifyDate: new Date("2025-01-06T13:30:49")
 };
 
-let article2: Article = {
-  articleId: 2,
+let blog2: Blog = {
+  blogId: 2,
   title: "Test Blog Title2",
   subtitle: "First Blog Subtitle2",
   content: "Test blog content2.",
@@ -29,10 +30,10 @@ let article2: Article = {
   modifyDate: new Date("2025-02-06T13:30:49")
 };
 
-// Mock ArticleService
-class MockArticleService {
-  getArticle(id: number): Observable<Article> {    
-    return of((id === 1) ? article1 : article2);
+// Mock BlogService
+class MockBlogService {
+  getBlog(id: number): Observable<Blog> {    
+    return of((id === 1) ? blog1 : blog2);
   }
 }
 
@@ -47,25 +48,26 @@ const mockActivatedRoute = {
   }
 };
 
-describe('ArticleComponent', () => {
-  let component: ArticleComponent;
-  let fixture: ComponentFixture<ArticleComponent>;
-  let articleService: ArticleService;
+// set up for the BlogComponent
+describe('BlogComponent', () => {
+  let component: BlogComponent;
+  let fixture: ComponentFixture<BlogComponent>;
+  let blogService: BlogService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ArticleComponent],
+      imports: [BlogComponent],
       providers: [
-        { provide: ArticleService, useClass: MockArticleService },
+        { provide: BlogService, useClass: MockBlogService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         provideHttpClient()
       ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ArticleComponent);
+    fixture = TestBed.createComponent(BlogComponent);
     component = fixture.componentInstance;
-    articleService = TestBed.inject(ArticleService);
+    blogService = TestBed.inject(BlogService);
 
     fixture.detectChanges();
   });
@@ -73,14 +75,14 @@ describe('ArticleComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  
-  it('init should retreive article1 from ArticleService', () => {
-    expect(component.article).toBe(article1);
+
+  it('init should retreive blog1 from BlogService', () => {
+    expect(component.blog).toBe(blog1);
   });
 
-  it('should retreive article2 from ArticleService', () => {
-    component.getArticle(2);
-    expect(component.article).toBe(article2);
+  it('should retreive blog2 from BlogService', () => {
+    component.getBlog(2);
+    expect(component.blog).toBe(blog2);
   });
 
 });

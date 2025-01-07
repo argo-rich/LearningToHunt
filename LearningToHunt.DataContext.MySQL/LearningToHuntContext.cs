@@ -12,9 +12,11 @@ public partial class LearningToHuntContext : DbContext
     {
     }
 
-    public virtual DbSet<Author> Authors { get; set; }
+    public virtual DbSet<Author> Authors { get; set; } = null!;
 
-    public virtual DbSet<Article> Articles { get; set; }
+    public virtual DbSet<Article> Articles { get; set; } = null!;
+
+    public virtual DbSet<Blog> Blogs { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
