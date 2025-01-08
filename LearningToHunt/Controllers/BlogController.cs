@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LearningToHunt.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BlogController : ControllerBase
 {
     private readonly ILogger<ArticleController> _logger;

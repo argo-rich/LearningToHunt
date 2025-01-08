@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LearningToHunt.EntityModels.MySQL;
 
+[Table("blogs")]
 public class Blog
 {
     [Key]

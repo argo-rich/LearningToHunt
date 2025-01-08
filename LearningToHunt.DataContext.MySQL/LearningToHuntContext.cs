@@ -20,7 +20,11 @@ public partial class LearningToHuntContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySQL("server=127.0.0.1;uid=root;pwd=MmtU9YtwKzj4jAh156ON;database=learning_to_hunt");
+        string mysqlServer = Environment.GetEnvironmentVariable("L2H_MYSQL_SVR")!;
+        string mysqlUser = Environment.GetEnvironmentVariable("L2H_MYSQL_U")!;
+        string mysqlPwd = Environment.GetEnvironmentVariable("L2H_MYSQL_W")!;
+        string mysqlDb = Environment.GetEnvironmentVariable("L2H_MYSQL_D")!;
+        optionsBuilder.UseMySQL($"server={mysqlServer};uid={mysqlUser};pwd={mysqlPwd};database={mysqlDb}");
 
         optionsBuilder.LogTo(LearningToHuntContextLogger.WriteLine, new[] { 
             Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
