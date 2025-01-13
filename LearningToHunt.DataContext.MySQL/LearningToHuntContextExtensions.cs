@@ -20,9 +20,9 @@ public static class LearningToHuntContextExtensions
             // Data Source is the modern equivalent of Filename.
             options.UseMySQL(connectionString);
 
-            options.LogTo(LearningToHuntContextLogger.WriteLine,
-            new[] { Microsoft.EntityFrameworkCore
-                .Diagnostics.RelationalEventId.CommandExecuting });
+            options.LogTo(LearningToHuntContextLogger.WriteLine, new[] { 
+                Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
+            });
         },
         // Register with a transient lifetime to avoid concurrency 
         // issues in Blazor server-side projects.

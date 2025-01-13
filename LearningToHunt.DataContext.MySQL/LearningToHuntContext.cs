@@ -20,15 +20,18 @@ public partial class LearningToHuntContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        string mysqlServer = Environment.GetEnvironmentVariable("L2H_MYSQL_SVR")!;
-        string mysqlUser = Environment.GetEnvironmentVariable("L2H_MYSQL_U")!;
-        string mysqlPwd = Environment.GetEnvironmentVariable("L2H_MYSQL_W")!;
-        string mysqlDb = Environment.GetEnvironmentVariable("L2H_MYSQL_D")!;
-        optionsBuilder.UseMySQL($"server={mysqlServer};uid={mysqlUser};pwd={mysqlPwd};database={mysqlDb}");
+        if (!optionsBuilder.IsConfigured)
+        {
+            string mysqlServer = Environment.GetEnvironmentVariable("L2H_MYSQL_SVR")!;
+            string mysqlUser = Environment.GetEnvironmentVariable("L2H_MYSQL_U")!;
+            string mysqlPwd = Environment.GetEnvironmentVariable("L2H_MYSQL_W")!;
+            string mysqlDb = Environment.GetEnvironmentVariable("L2H_MYSQL_D")!;
+            optionsBuilder.UseMySQL($"server={mysqlServer};uid={mysqlUser};pwd={mysqlPwd};database={mysqlDb}");
 
-        optionsBuilder.LogTo(LearningToHuntContextLogger.WriteLine, new[] { 
-            Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
-        });
+            optionsBuilder.LogTo(LearningToHuntContextLogger.WriteLine, new[] { 
+                Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
+            });
+        }        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

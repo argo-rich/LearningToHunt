@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningToHunt.EntityModels
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningToHunt.DataContext.MySQL", "LearningToHunt.DataContext.MySQL\LearningToHunt.DataContext.MySQL.csproj", "{43884DDB-E8ED-4182-B34D-9FBC29DC835D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningToHunt.Tests", "LearningToHunt.Tests\LearningToHunt.Tests.csproj", "{49DBA8D7-3329-47A5-B642-401050562E2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{43884DDB-E8ED-4182-B34D-9FBC29DC835D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43884DDB-E8ED-4182-B34D-9FBC29DC835D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43884DDB-E8ED-4182-B34D-9FBC29DC835D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49DBA8D7-3329-47A5-B642-401050562E2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49DBA8D7-3329-47A5-B642-401050562E2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49DBA8D7-3329-47A5-B642-401050562E2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49DBA8D7-3329-47A5-B642-401050562E2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
