@@ -6,9 +6,10 @@ import { WeatherForecastComponent } from './weather-forecast/weather-forecast.co
 import { PrivacyComponent } from './privacy/privacy.component';
 import { ArticleComponent } from './article/article.component';
 import { BlogComponent } from './blog/blog.component';
+import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
-    {path: "", component: BlogComponent},
+    {path: "", component: HomeComponent},
     {path: "blog/:blogId", component: BlogComponent},
     {path: "blog", component: BlogComponent},
     {path: "blogs", component: BlogComponent},
