@@ -55,7 +55,7 @@ public class LearningToHuntTests
     }
 
     [Fact]
-    public async void Article_1_Exists()
+    public async Task Article_1_Exists()
     {
         // Arrange
         ArticleController controller = new ArticleController(mockArticleLogger, context);
@@ -71,7 +71,7 @@ public class LearningToHuntTests
     }
 
     [Fact]
-    public async void Article_2_Does_Not_Exist()
+    public async Task Article_2_Does_Not_Exist()
     {
         // Arrange
         ArticleController controller = new ArticleController(mockArticleLogger, context);
