@@ -19,6 +19,9 @@ public class LearningToHuntTests
         context = new LearningToHuntContext(
             new DbContextOptionsBuilder<LearningToHuntContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .LogTo(LearningToHuntContextLogger.WriteLine, new[] { 
+                    Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
+                })
                 .Options
         );
         PreArrange();
@@ -85,6 +88,90 @@ public class LearningToHuntTests
         Assert.Equal(404, notFoundResult.StatusCode);
     }
     
+    [Fact]
+    public async Task Article_1_Updates()
+    {
+        // Arrange        
+        string title = $"Title Update: {DateTime.Now}";
+        string subtitle = $"Subtitle Update: {DateTime.Now}";
+        string content = $"Content Update: {DateTime.Now}";
+        Article updatedArticle = new Article { 
+            ArticleId = 1,
+            AuthorId = 1,
+            Title = title,
+            Subtitle = subtitle,
+            Content = content
+        };
+        ArticleController controller = new ArticleController(mockArticleLogger, context);
+
+        // Act
+        var result = await controller.Update(updatedArticle.ArticleId, updatedArticle);
+
+        // Assert
+        Assert.NotNull(result);
+        var noContentResult = Assert.IsType<NoContentResult>(result); 
+        Assert.Equal(204, noContentResult.StatusCode);
+    }
+
+    [Fact]
+    public async Task Article_Not_Exists_Update_Fails_With_404()
+    {
+        // Arrange
+        Article nonExistantArticle = new Article { 
+            ArticleId = 2,
+            AuthorId = 1,
+            Title = "Bogus Title",
+            Subtitle = "Bogus Subtitle",
+            Content = "Bogus Content"
+        };
+        ArticleController controller = new ArticleController(mockArticleLogger, context);
+
+        // Act
+        var result = await controller.Update(nonExistantArticle.ArticleId, nonExistantArticle);
+
+        // Assert
+        Assert.NotNull(result);
+        var notFoundResult = Assert.IsType<NotFoundResult>(result); 
+        Assert.Equal(404, notFoundResult.StatusCode);
+    }
+
+    [Fact]
+    public async Task Article_Null_Update_Fails_With_400()
+    {
+        // Arrange
+        ArticleController controller = new ArticleController(mockArticleLogger, context);
+
+        // Act
+        var result = await controller.Update(1, null!);
+
+        // Assert
+        Assert.NotNull(result);
+        var badRequestResult = Assert.IsType<BadRequestResult>(result); 
+        Assert.Equal(400, badRequestResult.StatusCode);
+    }
+
+    [Fact]
+    public async Task Article_Non_Matching_IDs_Update_Fails_With_400()
+    {
+        // Arrange
+        Article articleWithRogueId = new Article { 
+            ArticleId = 1111111111,
+            AuthorId = 1,
+            Title = "Bogus Title",
+            Subtitle = "Bogus Subtitle",
+            Content = "Bogus Content"
+        };
+        ArticleController controller = new ArticleController(mockArticleLogger, context);
+
+        // Act
+        var result = await controller.Update(1, articleWithRogueId);
+
+        // Assert
+        Assert.NotNull(result);
+        var badRequestResult = Assert.IsType<BadRequestResult>(result); 
+        Assert.Equal(400, badRequestResult.StatusCode);
+    }
+
     [Fact]
     public async void Blog_1_Exists()
     {

@@ -19,4 +19,9 @@ export class ArticleService {
   getArticle(id: number): Observable<Article> {
     return this.http.get<Article>(this.apiURL + id);
   }
+
+  updateArticle(id: number, updatedArticle: Article): Observable<void> {
+    updatedArticle.articleId = id;
+    return this.http.put<void>(this.apiURL + id, updatedArticle);
+  }
 }

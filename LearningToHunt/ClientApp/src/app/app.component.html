@@ -1,7 +1,14 @@
-<header>
+<header class="container">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" routerLink="/">Learning <small><u><i>to</i></u></small> Hunt</a>
+                <div>
+                    <a class="navbar-brand" routerLink="/">
+                        Learning <small><u><i>to</i></u></small> Hunt
+                    </a>                    
+                    <p class="p-0">
+                        <a class="sm-nav-logo" routerLink="/"><small class="sm-nav-logo">The Hunting 101 bootstrap</small></a>
+                    </p>
+                </div>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -24,11 +31,11 @@
                         </li>
                         -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="blogs">Blogs</a>
+                            <a class="nav-link text-dark" href="hunting-guide">Hunting Guide</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="articles">Articles</a>
-                        </li>                        
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" routerLink="privacy">Privacy</a>
                         </li>
@@ -46,6 +53,6 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Learning to Hunt - <a routerLink="privacy">Privacy</a>
+            &copy; {{currDate | date:'yyyy'}} - Learning to Hunt - <a routerLink="privacy">Privacy</a>
         </div>
     </footer>

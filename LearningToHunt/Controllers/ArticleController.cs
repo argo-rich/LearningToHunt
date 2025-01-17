@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using LearningToHunt.DataContext.MySQL;
 using LearningToHunt.EntityModels.MySQL;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public class ArticleController : ControllerBase
     public async Task<IActionResult> GetArticle(string id)
     {
         int.TryParse(id, out int articleId);
-        // if not in the cache, then try to get it from the db
+        
         Article? article = await _db.Articles.FirstOrDefaultAsync(a => a.ArticleId == articleId);
 
         if (article == null)
@@ -32,6 +33,40 @@ public class ArticleController : ControllerBase
             return NotFound(); // 404 resource not found
         }
         return Ok(article);
+    }
+
+    // PUT: api/article/[id]
+    // BODY: Article (JSON, XML)
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> Update(int id, [FromBody] Article a)
+    {
+        if (a == null || a.ArticleId != id)
+        {
+            return BadRequest(); // 400 Bad request.
+        }
+
+        Article? existing = await _db.Articles.FirstOrDefaultAsync(a => a.ArticleId == id);
+
+        if (existing == null)
+        {
+            return NotFound(); // 404 Resource not found.
+        }
+
+        // preventing an Identity Conflict between 'existing' and 'a' objects/entities
+        _db.ChangeTracker.Clear();
+
+        _db.Articles.Update(a);
+        int affected = await _db.SaveChangesAsync();
+        if (affected == 1)
+        {
+            return new NoContentResult(); // 204 No content.
+        }
+
+        return Problem("Database update failed.", null, 500);
     }
 
 }

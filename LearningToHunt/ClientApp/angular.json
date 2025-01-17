@@ -24,6 +24,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@kolkov/angular-editor"
               }
             ],
             "styles": [
@@ -88,6 +92,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@kolkov/angular-editor"
               }
             ],
             "styles": [

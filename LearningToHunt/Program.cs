@@ -20,6 +20,7 @@ builder.Services.AddCors(options =>
           // Allow HTTP calls from the Blazor Web App project.
           policy.AllowAnyHeader();
           policy.WithOrigins([Environment.GetEnvironmentVariable("L2H_CLIENT_URL")!]);
+          policy.WithMethods(["GET", "POST", "PUT", "DELETE"]);
       });
 });
 

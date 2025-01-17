@@ -1,0 +1,14 @@
+@base_address = https://localhost:7000/api/article/
+
+PUT {{base_address}}1
+Content-Type: application/json
+
+{
+  "articleId": 1,
+  "title": "First Article Title - upd",
+  "subtitle": "First Article Subtitle - updated",
+  "content": "This is the article content - updated",
+  "authorId": 1,
+  "createDate": "2025-01-15T10:41:10",
+  "modifyDate": "2025-01-15T10:41:10"
+}

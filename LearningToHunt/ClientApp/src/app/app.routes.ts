@@ -15,6 +15,7 @@ export const routes: Routes = [
     {path: "blogs", component: BlogComponent},
     {path: "weather-forecast", component: WeatherForecastComponent},
     {path: "article/:articleId", component: ArticleComponent},
+    {path: "hunting-guide", redirectTo: 'article/1' },
     {path: "article", component: ArticleComponent},
     {path: "articles", component: ArticleComponent},
     {path: "privacy", component: PrivacyComponent}

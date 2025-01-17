@@ -1,4 +1,27 @@
-<h4 class="display-4">{{article.title}}</h4>
-<h6 class="display-6">{{article.subtitle}}</h6>
 
-<p>{{article.content}}</p>
+<div>
+    <span *ngIf="editMode">
+        <form [formGroup]="articleForm" (ngSubmit)="updateArticle()">
+            <button type="submit">Save</button><br>
+            <input class="display-4" formControlName="title" size="25">
+            <div *ngIf="title!.invalid && (title!.dirty || title!.touched)" class="alert alert-danger">
+            <div *ngIf="title!.hasError('required')">
+                Title is required.
+                </div>
+                <div *ngIf="title!.hasError('maxlength')">
+                Title must be no longer than 25 characters.
+                </div>
+            </div>
+            <br>
+            <input class="display-6" formControlName="subtitle" size="35"><br>
+            <angular-editor formControlName="content"></angular-editor>
+        </form>
+    </span>
+
+    <span *ngIf="!editMode;">
+        <button (click)="editMode = true">Edit</button>
+        <h4 class="display-4" (click)="editMode = true">{{article.title}}</h4>
+        <h6 class="display-6">{{article.subtitle}}</h6>
+        <p [innerHTML]="article.content"></p>
+    </span>
+</div>
