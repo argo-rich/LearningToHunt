@@ -12,3 +12,13 @@
     content: "";
     line-height: calc(.3rem + .25rem)
  }
+
+ .anchor-link {
+  padding: 0%;
+  margin: 0%;
+  height: 10px;
+}
+
+.anchor-links {
+  padding-bottom: 4%;
+}
