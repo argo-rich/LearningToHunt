@@ -23,6 +23,7 @@
         <button (click)="editMode = true" class="btn btn-link">Edit</button>
         <h4 class="display-4" (click)="editMode = true">{{article.title}}</h4>
         <h6 class="display-6">{{article.subtitle}}</h6>
+        <br>
         <p [innerHTML]="article.content"></p>
     </span>
 </div>
