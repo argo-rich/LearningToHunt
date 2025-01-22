@@ -128,7 +128,7 @@ export class ArticleComponent implements OnInit, AfterViewInit {
       // iterate through the anchorPoints and add them to anchor-links div
       for (let element of anchorPoints) {
         let button = document.createElement("button");
-        let anchorPoint = element.getBoundingClientRect().top;
+        let anchorPoint = element.getBoundingClientRect().top + 20;
         let func = function() { scrollTo({top: anchorPoint, left: 0, behavior: 'smooth'}); };
         button.innerText = element.textContent!;
         button.className = "btn btn-link anchor-link";
