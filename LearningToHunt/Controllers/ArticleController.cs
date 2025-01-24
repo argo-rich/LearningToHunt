@@ -63,7 +63,7 @@ public class ArticleController : ControllerBase
         int affected = await _db.SaveChangesAsync();
         if (affected == 1)
         {
-            return new NoContentResult(); // 204 No content.
+            return NoContent(); // 204 No content.
         }
 
         return Problem("Database update failed.", null, 500);

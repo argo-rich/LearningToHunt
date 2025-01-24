@@ -17,7 +17,7 @@ public static class LearningToHuntContextExtensions
     {
         services.AddDbContext<LearningToHuntContext>(options =>
         {
-            // Data Source is the modern equivalent of Filename.
+            // Data Source
             options.UseMySQL(connectionString);
 
             options.LogTo(LearningToHuntContextLogger.WriteLine, new[] { 

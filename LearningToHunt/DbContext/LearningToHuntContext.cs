@@ -1,9 +1,11 @@
 ﻿using LearningToHunt.EntityModels.MySQL;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LearningToHunt.DataContext.MySQL;
 
-public partial class LearningToHuntContext : DbContext
+public partial class LearningToHuntContext : IdentityDbContext<LthUser>
 {
     public LearningToHuntContext() {}
 
@@ -36,8 +38,23 @@ public partial class LearningToHuntContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        // Customize the ASP.NET Identity model and override the defaults if needed.
+        // For example, you can rename the ASP.NET Identity table names and more.
+        // Add your customizations after calling base.OnModelCreating(builder);
+        modelBuilder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
+
         OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+}
+
+public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<LthUser>
+{
+    public void Configure(EntityTypeBuilder<LthUser> builder)
+    {
+        builder.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+        builder.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+    }
 }

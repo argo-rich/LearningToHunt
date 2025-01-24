@@ -1,0 +1,12 @@
+@base_address = https://localhost:7000/register
+
+
+POST {{base_address}}
+Content-Type: application/json
+
+{
+  "email": "rich@test.com",
+  "password": "weakpass",
+  "firstName": "Rich",
+  "lastName": "Argo"
+}

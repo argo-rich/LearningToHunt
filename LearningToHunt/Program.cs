@@ -1,16 +1,35 @@
 using LearningToHunt.DataContext.MySQL; // To use AddLearningToHuntContext method
+using Swashbuckle.AspNetCore.SwaggerUI; // to use SubmitMethod
+using LearningToHunt.EntityModels.MySQL;
+using LearningToHunt.Identity;
+using Microsoft.AspNetCore.Identity;
 
 const string corsPolicyName = "allowWasmClient";
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
+// MySQL items
 string mysqlServer = Environment.GetEnvironmentVariable("L2H_MYSQL_SVR")!;
 string mysqlUser = Environment.GetEnvironmentVariable("L2H_MYSQL_U")!;
 string mysqlPwd = Environment.GetEnvironmentVariable("L2H_MYSQL_W")!;
 string mysqlDb = Environment.GetEnvironmentVariable("L2H_MYSQL_D")!;
-builder.Services.AddLearningToHuntContext($"server={mysqlServer};uid={mysqlUser};pwd={mysqlPwd};database={mysqlDb}");
+string mysqlConnStr = $"server={mysqlServer};uid={mysqlUser};pwd={mysqlPwd};database={mysqlDb}";
+
+var builder = WebApplication.CreateBuilder(args);
+
+// set up the use of Identity for registration, login, logout, forgot passwd, etc
+builder.Services.AddIdentityApiEndpoints<LthUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<LearningToHuntContext>();
+builder.Services.AddLearningToHuntContext(mysqlConnStr);
+builder.Services.AddAuthorization();
+
+// Add other services to the container.
 builder.Services.AddControllersWithViews();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.ConfigureApplicationCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(20));
 
 builder.Services.AddCors(options =>
 {
@@ -26,11 +45,28 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Map Identity routes
+app.MapCustomIdentityApi<LthUser>();
+
+// if development
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Learning to Hunt Service API Version 1");
+
+        c.SupportedSubmitMethods(new[] {
+            SubmitMethod.Get, SubmitMethod.Post,
+            SubmitMethod.Put, SubmitMethod.Delete 
+        });
+    });
+}
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+else
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseHsts();    
 }
 
 //app.UseHttpsRedirection();
@@ -40,6 +76,7 @@ app.UseCors(corsPolicyName);
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

@@ -1,0 +1,10 @@
+@base_address = https://localhost:7000/login?useCookies=true
+
+
+POST {{base_address}}
+Content-Type: application/json
+
+{
+  "email": "rich@argohaus.com",
+  "password": "Abc123!"
+}
