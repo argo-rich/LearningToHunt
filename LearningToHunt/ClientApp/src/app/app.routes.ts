@@ -2,21 +2,43 @@
 import { Routes } from '@angular/router';
 
 // added
-import { WeatherForecastComponent } from './weather-forecast/weather-forecast.component';
-import { PrivacyComponent } from './privacy/privacy.component';
-import { ArticleComponent } from './article/article.component';
-import { BlogComponent } from './blog/blog.component';
-import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
-    {path: "", component: HomeComponent},
-    {path: "blog/:blogId", component: BlogComponent},
-    {path: "blog", component: BlogComponent},
-    {path: "blogs", component: BlogComponent},
-    {path: "weather-forecast", component: WeatherForecastComponent},
-    {path: "article/:articleId", component: ArticleComponent},
-    {path: "hunting-guide", redirectTo: 'article/1' },
-    {path: "article", component: ArticleComponent},
-    {path: "articles", component: ArticleComponent},
-    {path: "privacy", component: PrivacyComponent}
+    {
+        path: '',
+        loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent) 
+    },
+    {
+        path: "weather-forecast", 
+        loadComponent: () => import('./weather-forecast/weather-forecast.component').then((m) => m.WeatherForecastComponent)
+    },
+    {
+        path: "article/:articleId", 
+        loadComponent: () => import('./article/article.component').then((m) => m.ArticleComponent) 
+    },
+    { path: "hunting-guide", redirectTo: 'article/1' },
+    {
+        path: "article", 
+        loadComponent: () => import('./article/article.component').then((m) => m.ArticleComponent)
+    },
+    {
+        path: "articles", 
+        loadComponent: () => import('./article/article.component').then((m) => m.ArticleComponent)
+    },
+    {
+        path: "blog/:blogId", 
+        loadComponent: () => import('./blog/blog.component').then((m) => m.BlogComponent)
+    },
+    {
+        path: "blog", 
+        loadComponent: () => import('./blog/blog.component').then((m) => m.BlogComponent)
+    },
+    {
+        path: "blogs", 
+        loadComponent: () => import('./blog/blog.component').then((m) => m.BlogComponent)
+    },
+    {
+        path: "privacy", 
+        loadComponent: () => import('./privacy/privacy.component').then((m) => m.PrivacyComponent)
+    }
 ];
