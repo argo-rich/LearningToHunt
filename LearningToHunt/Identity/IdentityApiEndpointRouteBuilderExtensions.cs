@@ -1,3 +1,9 @@
+/**
+ * This file was copied from https://github.com/dotnet/aspnetcore/blob/7091e0b4232ed90ff3c2138966692117ce4143bf/src/Identity/Core/src/IdentityApiEndpointRouteBuilderExtensions.cs
+ * and modified in order to be able to register LthUser users (with added FirstName and LastName attributes.)  The file 
+ * has been/will be modified for other things as needed.  Download the file linked to above and compare with this to see the diff.
+ */
+
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
