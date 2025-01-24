@@ -5,10 +5,10 @@ import { BlogComponent } from './blog.component';
 //added
 import { provideHttpClient } from "@angular/common/http";
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { BlogService } from './blog.service';
+import { BlogService } from '../_services/blog.service';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs';
-import { Blog } from '../models/blog';
+import { Blog } from '../_models/blog';
 
 let blog1: Blog = {
   blogId: 1,

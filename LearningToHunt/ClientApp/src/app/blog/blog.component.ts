@@ -2,8 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 
 //added
-import { Blog } from '../models/blog';
-import { BlogService } from './blog.service';
+import { Blog } from '../_models/blog';
+import { BlogService } from '../_services/blog.service';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 

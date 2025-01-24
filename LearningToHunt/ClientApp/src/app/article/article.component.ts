@@ -2,8 +2,8 @@
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 
 //added
-import { Article } from '../models/article';
-import { ArticleService } from './article.service';
+import { Article } from '../_models/article';
+import { ArticleService } from '../_services/article.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
 import {NgIf} from '@angular/common';

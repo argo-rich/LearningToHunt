@@ -4,10 +4,10 @@ import { ArticleComponent } from './article.component';
 // added imports
 import { provideHttpClient } from "@angular/common/http";
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { ArticleService } from './article.service';
+import { ArticleService } from '../_services/article.service';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs';
-import { Article } from '../models/article';
+import { Article } from '../_models/article';
 import { DOCUMENT } from '@angular/common';
 
 let articles = new Map<number, Article>([
