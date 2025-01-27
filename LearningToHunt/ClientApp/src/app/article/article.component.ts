@@ -19,18 +19,11 @@ import { DOCUMENT } from '@angular/common';
 
 export class ArticleComponent implements OnInit, AfterViewInit {
   
+  article!: Article;
+  form!: FormGroup;
+  submitted: boolean = false;
   editMode: boolean = false;
   articleLoaded: boolean = false;
-  article: Article = {
-    "articleId": 0,
-    "title": "",
-    "subtitle": "",
-    "content": "",
-    "authorId": 0,
-    "createDate": new Date(),
-    "modifyDate": new Date()
-  }
-  articleForm: FormGroup = new FormGroup({});
 
   constructor(
     private articleService: ArticleService,
@@ -59,22 +52,22 @@ export class ArticleComponent implements OnInit, AfterViewInit {
   }
 
   get title() {    
-    return this.articleForm.get('title');
+    return this.form.get('title');
   }
 
   get subtitle() {
-    return this.articleForm.get('subtitle');
+    return this.form.get('subtitle');
   }
 
   get content() {
-    return this.articleForm.get('content');
+    return this.form.get('content');
   }
 
   getArticle(articleId: number) {
     this.articleService.getArticle(articleId).subscribe(article => {
       this.article = article;
       
-      this.articleForm = new FormGroup({
+      this.form = new FormGroup({
         title: new FormControl(this.article.title, [Validators.required, Validators.maxLength(25)]),
         subtitle: new FormControl(this.article.subtitle, [Validators.required, Validators.maxLength(35)]),
         content: new FormControl(this.article.content, [Validators.required])
@@ -83,14 +76,23 @@ export class ArticleComponent implements OnInit, AfterViewInit {
     });
   }
 
-  updateArticle() {
-    let id = parseInt(this.route.snapshot.paramMap.get('articleId') || "0");
+  onSubmit() {
+    this.submitted = true;
 
+    // stop here if form is invalid
+    if (this.form.invalid) {
+        return;
+    }
+
+    this.updateArticle();
+  }
+
+  updateArticle() {
     this.editMode = false;
     this.article.title = this.title?.value;
     this.article.subtitle = this.subtitle?.value;
     this.article.content = this.content?.value;
-    this.articleService.updateArticle(id, this.article).subscribe(() => {
+    this.articleService.updateArticle(this.article.articleId, this.article).subscribe(() => {
       console.log("Update request processed");
       this.setUpAnchorLinks();
     });

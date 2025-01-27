@@ -14,15 +14,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './blog.component.css'
 })
 export class BlogComponent implements OnInit {
-blog: Blog = {
-    "blogId": 0,
-    "title": "",
-    "subtitle": "",
-    "content": "",
-    "authorId": 0,
-    "createDate": new Date(),
-    "modifyDate": new Date()
-  }
+blog!: Blog;
 
   constructor(
     private blogService: BlogService,

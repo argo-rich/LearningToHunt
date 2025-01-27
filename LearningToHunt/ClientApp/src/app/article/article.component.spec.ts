@@ -93,7 +93,7 @@ describe('ArticleComponent', () => {
   });
 
   it('should update article1 via ArticleService', () => {
-    component.articleForm.setValue({
+    component.form.setValue({
         title: "Updated Title",
         subtitle: "Updated Subtitle",
         content: "Updated content."
