@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 })
 export class BlogService {
 
-private apiURL = environment.apiBaseUrl + "blog/";
+private apiURL = environment.apiBaseUrl + "api/blog/";
 
   constructor(private http: HttpClient) { }
 
