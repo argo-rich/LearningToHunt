@@ -6,6 +6,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LearningToHunt.Identity;
 
+/// <summary>
+/// Controller to help manage ASP.NET Core Identity user accounts.  This controller only adds 
+/// services that are not created by default after running the migration and following the steps
+/// to use Identity in a Web API:
+/// <para>
+/// (https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-8.0).
+/// </para>
+///
+/// <para>
+/// Migration steps used:
+/// <code>
+/// dotnet ef migrations add CreateIdentitySchema
+/// dotnet ef database update
+/// </code>
+/// </para>
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AccountsController : ControllerBase
