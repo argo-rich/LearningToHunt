@@ -29,6 +29,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// set up logins to expire after 20 minutes
 builder.Services.ConfigureApplicationCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(20));
 
 builder.Services.AddCors(options =>
