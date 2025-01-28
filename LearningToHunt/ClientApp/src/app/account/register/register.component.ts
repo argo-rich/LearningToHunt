@@ -7,6 +7,13 @@ import { AccountService } from '../../_services/account.service';
 import { AlertService } from '../../_services/alert.service';
 import { passwordMatchValidator } from '../../_validators/password-match.validator';
 
+export enum RegistrationStatus {
+  NotSent,
+  InProgress,
+  Successful,
+  Failed
+}
+
 @Component({
   selector: 'app-register',
   imports: [FormsModule, ReactiveFormsModule, NgIf, NgClass],
@@ -15,8 +22,8 @@ import { passwordMatchValidator } from '../../_validators/password-match.validat
 })
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
-  loading = false;
   submitted = false;
+  status: RegistrationStatus = RegistrationStatus.NotSent;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,17 +72,18 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.status = RegistrationStatus.InProgress;
     this.accountService.register(this.form.value)
         .pipe(first())
         .subscribe({
             next: () => {
-                this.alertService.success('Registration successful', { keepAfterRouteChange: true });
-                this.router.navigate(['../login'], { relativeTo: this.route });
+              this.status = RegistrationStatus.Successful;
+              this.alertService.success('Registration successful', { keepAfterRouteChange: true });
+              this.router.navigate(['../login'], { relativeTo: this.route });
             },
             error: error => {
-                this.alertService.error(error);
-                this.loading = false;
+              this.status = RegistrationStatus.Failed;
+              this.alertService.error(error);
             }
         });
   }

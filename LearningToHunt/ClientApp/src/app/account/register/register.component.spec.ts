@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RegisterComponent } from './register.component';
+import { RegisterComponent, RegistrationStatus } from './register.component';
 
 import { ActivatedRoute } from '@angular/router';
 import { User } from '@app/_models/user';
@@ -73,7 +73,6 @@ describe('RegisterComponent', () => {
 
     // assert
     expect(component.form.invalid).toBe(true);
-    expect(component.loading).toBe(false);
   });
 
   // test successful registration
@@ -92,7 +91,7 @@ describe('RegisterComponent', () => {
 
     // assert
     expect(component.form.invalid).toBe(false);
-    expect(component.loading).toBe(true);
+    expect(component.status).toBe(RegistrationStatus.Successful)
   });
 
   // test failed registration
@@ -111,7 +110,7 @@ describe('RegisterComponent', () => {
 
     // assert
     expect(component.form.invalid).toBe(false);
-    expect(component.loading).toBe(false);
+    expect(component.status).toBe(RegistrationStatus.Failed)
   });
 
 });
