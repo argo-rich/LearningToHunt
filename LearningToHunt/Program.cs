@@ -30,17 +30,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // set up logins to expire after 20 minutes
-builder.Services.ConfigureApplicationCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(20));
+builder.Services.ConfigureApplicationCookie(options => 
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = false; // to allow cookies to be sent by client side code
+    options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.None : SameSiteMode.Strict;
+});
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: corsPolicyName,
       policy =>
       {
-          // Allow HTTP calls from the Blazor Web App project.
+          // Allow HTTP calls from the client
           policy.AllowAnyHeader();
           policy.WithOrigins([Environment.GetEnvironmentVariable("L2H_CLIENT_URL")!]);
-          policy.WithMethods(["GET", "POST", "PUT", "DELETE"]);
+          policy.WithMethods(["GET", "POST", "PUT", "DELETE", "OPTIONS"]);
+          policy.AllowCredentials();
       });
 });
 
@@ -72,17 +78,24 @@ else
 
 //app.UseHttpsRedirection();
 
-app.UseCors(corsPolicyName);
-
 app.UseStaticFiles();
+
+// routing
 app.UseRouting();
-
-app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
-
 app.MapFallbackToFile("index.html");
+
+app.UseCookiePolicy(
+    new CookiePolicyOptions
+    {
+        Secure = app.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always
+    }
+);
+
+app.UseCors(corsPolicyName);
+
+app.UseAuthorization();
 
 app.Run();
