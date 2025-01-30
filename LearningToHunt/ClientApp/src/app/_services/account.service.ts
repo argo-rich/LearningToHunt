@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 
@@ -27,24 +27,28 @@ export class AccountService {
   register(user: User): Observable<object> {
     return this.http.post(`${environment.apiBaseUrl}register`, user);
   }
-/*
-  login(username: string, password: string) {
-      return this.http.post<User>(`${environment.apiBaseUrl}/users/authenticate`, { username, password })
+
+  login(email: string, password: string): Observable<User> {
+      return this.http.post<User>(`${environment.apiBaseUrl}api/account/login`, { email, password }, {withCredentials: true})
           .pipe(map(user => {
-              // store user details and jwt token in local storage to keep user logged in between page refreshes
+              // store user details in local storage to keep user logged in between page refreshes
               localStorage.setItem('user', JSON.stringify(user));
               this.userSubject.next(user);
               return user;
           }));
   }
 
-  logout() {
-      // remove user from local storage and set current user to null
-      localStorage.removeItem('user');
-      this.userSubject.next(null);
-      this.router.navigate(['/account/login']);
+  logout(): Observable<object> {
+    return this.http.post(`${environment.apiBaseUrl}api/account/logout`, {}, {withCredentials: true});      
   }
 
+  removeUser() {
+    // remove user from local storage and set current user to null
+    localStorage.removeItem('user');
+    this.userSubject.next(null);
+    this.router.navigate(['/account/login']);
+  }
+/*
   getAll() {
       return this.http.get<User[]>(`${environment.apiBaseUrl}/users`);
   }
