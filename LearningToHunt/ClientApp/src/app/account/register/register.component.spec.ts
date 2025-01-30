@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RegisterComponent, RegistrationStatus } from './register.component';
+import { RegisterComponent } from './register.component';
 
 import { ActivatedRoute } from '@angular/router';
 import { User } from '@app/_models/user';
 import { AccountService } from '@app/_services/account.service';
 import { Observable, of, from, throwError } from 'rxjs';
 import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpRequestStatus } from '@app/_models/http-request-status';
 
 const successfulRegistration = of({});
 
@@ -91,7 +92,7 @@ describe('RegisterComponent', () => {
 
     // assert
     expect(component.form.invalid).toBe(false);
-    expect(component.status).toBe(RegistrationStatus.Successful)
+    expect(component.status).toBe(HttpRequestStatus.Successful)
   });
 
   // test failed registration
@@ -110,7 +111,7 @@ describe('RegisterComponent', () => {
 
     // assert
     expect(component.form.invalid).toBe(false);
-    expect(component.status).toBe(RegistrationStatus.Failed)
+    expect(component.status).toBe(HttpRequestStatus.Failed)
   });
 
 });

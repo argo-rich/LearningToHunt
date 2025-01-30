@@ -5,14 +5,9 @@ import { first } from 'rxjs/operators';
 import {NgIf, NgClass} from '@angular/common';
 import { AccountService } from '../../_services/account.service';
 import { AlertService } from '../../_services/alert.service';
+import { HttpRequestStatus } from '@app/_models/http-request-status';
 import { passwordMatchValidator } from '../../_validators/password-match.validator';
-
-export enum RegistrationStatus {
-  NotSent,
-  InProgress,
-  Successful,
-  Failed
-}
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +18,7 @@ export enum RegistrationStatus {
 export class RegisterComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
-  status: RegistrationStatus = RegistrationStatus.NotSent;
+  status = HttpRequestStatus.NotSent;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -61,6 +56,11 @@ export class RegisterComponent implements OnInit {
     return this.form.get('lastName');
   }
 
+  // convenience method to determine if the component is working
+  get loading() {
+    return this.status === HttpRequestStatus.InProgress;
+  }
+
   onSubmit() {
     this.submitted = true;
 
@@ -72,19 +72,33 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.status = RegistrationStatus.InProgress;
+    this.status = HttpRequestStatus.InProgress;
     this.accountService.register(this.form.value)
         .pipe(first())
         .subscribe({
             next: () => {
-              this.status = RegistrationStatus.Successful;
+              this.status = HttpRequestStatus.Successful;
               this.alertService.success('Registration successful', { keepAfterRouteChange: true });
               this.router.navigate(['../login'], { relativeTo: this.route });
             },
             error: error => {
-              this.status = RegistrationStatus.Failed;
-              this.alertService.error(error);
+              this.status = HttpRequestStatus.Failed;
+              this.alertService.error(this.inferErrorMessage(error));
             }
         });
+  }
+    
+  inferErrorMessage(errResponse: HttpErrorResponse): string {
+    let message = "";
+    let count = 0;
+    
+    for (let key in errResponse.error.errors) {
+      message = errResponse.error.errors[key];
+      if (++count > 1) {
+        message += "<br>";
+      }
+    }
+    
+    return message;
   }
 }
