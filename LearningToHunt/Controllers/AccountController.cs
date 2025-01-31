@@ -88,43 +88,63 @@ public class AccountController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update([FromBody] UserUpdateDTO usrUpdDto)
     {
-        var identityUser = await _userManager.GetUserAsync(User); // this will not be null since the user will be authorized before this point
+        var identityUser = await _userManager.GetUserAsync(User); // User not null since method is authorized
+        IdentityResult result = null!;
+        bool nonPasswdChange = false;
+        bool passwordChange = !string.IsNullOrEmpty(usrUpdDto.Password);
 
-        identityUser!.Email = usrUpdDto.Email;
-        identityUser.UserName = usrUpdDto.Email;
-        identityUser.FirstName = usrUpdDto.FirstName;
-        identityUser.LastName = usrUpdDto.LastName;
+        if (passwordChange)
+        {      
+            // verify psswd & confirm match
+            if (string.IsNullOrEmpty(usrUpdDto.ConfirmPassword) || !usrUpdDto.Password!.Equals(usrUpdDto.ConfirmPassword))
+            {
+                return BadRequest("Password and Confirm Password do not match.");
+            }
+      
+            // verify current password
+            bool authCorrect = await _userManager.CheckPasswordAsync(identityUser!, usrUpdDto.CurrentPassword!);
+            if (!authCorrect)
+            {
+                return BadRequest("Current Password is invalid.");
+            }
 
-        var result = await _userManager.UpdateAsync(identityUser);
+            result = await _userManager.ChangePasswordAsync(identityUser!, usrUpdDto.CurrentPassword!, usrUpdDto.Password);
+        }
 
-        if (result.Succeeded)
-        {
-            bool resultStillSucceeded = true;      
-            if (!string.IsNullOrEmpty(usrUpdDto.Password))
-            {            
-                // verify current password
-                bool authCorrect = await _userManager.CheckPasswordAsync(identityUser, usrUpdDto.CurrentPassword!);
-                if (!authCorrect)
-                {
-                    return BadRequest("Current Password is invalid.");
-                }
+        if (!passwordChange || (result != null && result.Succeeded))
+        {            
+            if (!identityUser!.Email!.Equals(usrUpdDto.Email))
+            {
+                identityUser!.Email = usrUpdDto.Email;
+                identityUser.UserName = usrUpdDto.Email;
+                nonPasswdChange = true;
+            }
+            if (!identityUser.FirstName.Equals(usrUpdDto.FirstName)) 
+            {
+                identityUser.FirstName = usrUpdDto.FirstName;
+                nonPasswdChange = true;
+            }
+            if (!identityUser.LastName.Equals(usrUpdDto.LastName))
+            {
+                identityUser.LastName = usrUpdDto.LastName;
+                nonPasswdChange = true;
+            }
 
-                // verify psswd & confirm match
-                if (!usrUpdDto.Password.Equals(usrUpdDto.ConfirmPassword))
-                {
-                    return BadRequest("Password and Confirm Password do not match.");
-                }
+            if (nonPasswdChange) result = await _userManager.UpdateAsync(identityUser);
 
-                resultStillSucceeded = (await _userManager.ChangePasswordAsync(identityUser, usrUpdDto.CurrentPassword!, usrUpdDto.Password)).Succeeded;
-            }   
-            if (resultStillSucceeded)
+            if (!passwordChange && !nonPasswdChange)
+            {
+                return BadRequest("Nothing to change.");
+            }
+
+            if (result != null && result.Succeeded)
             {
                 return NoContent(); // 204 No content.
-            }         
+            }        
         }
-        
+
         string errorMessage = "User account update failed.";
-        _logger.LogError(errorMessage, result.Errors.ToArray());
+        _logger.LogError(errorMessage, result!.Errors.ToArray());
         return Problem(errorMessage, null, 500);
     }
 }
