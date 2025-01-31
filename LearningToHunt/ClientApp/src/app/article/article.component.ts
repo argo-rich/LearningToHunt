@@ -11,6 +11,8 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
 import { DOCUMENT } from '@angular/common';
 import { User } from '@app/_models/user';
 import { AccountService } from '@app/_services/account.service';
+import { AlertService } from '@app/_services/alert.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-article',
@@ -21,31 +23,32 @@ import { AccountService } from '@app/_services/account.service';
 
 export class ArticleComponent implements OnInit, AfterViewInit {
   
-  article!: Article;
+  article: Article = new Article();
   form!: FormGroup;
-  submitted: boolean = false;
-  editMode: boolean = false;
-  articleLoaded: boolean = false;
+  submitted = false;
+  editMode = false;
+  articleLoaded = false;
+  loadFailed = false;
   user?: User | null;
 
   constructor(
     private articleService: ArticleService,
     private route: ActivatedRoute,
     private accountService: AccountService,
+    private alertService: AlertService,
     @Inject(DOCUMENT) document: Document
-  ) {
-    this.accountService.user.subscribe(u => this.user = u);
-  }
+  ) {}
   
   ngOnInit(): void {
-    const articleId = parseInt(this.route.snapshot.paramMap.get('articleId') || "0");
+    this.accountService.user.subscribe(u => this.user = u);
+    const articleId = parseInt(this.route.snapshot.paramMap.get('articleId')!);
     if (articleId !== 0) {
       this.getArticle(articleId);
-    } 
+    }
   }
 
   async ngAfterViewInit(): Promise<void> {
-    while (!this.articleLoaded) {
+    while (!this.articleLoaded && !this.loadFailed) {
       console.log("It's not loaded.");
       await this.delay(20);
     }
@@ -70,17 +73,35 @@ export class ArticleComponent implements OnInit, AfterViewInit {
   }
 
   getArticle(articleId: number) {
-    this.articleService.getArticle(articleId).subscribe(article => {
-      this.article = article;
+    this.articleService.getArticle(articleId).subscribe( {
+      next: (article) => {
+        this.article = article;
       
-      this.form = new FormGroup({
-        title: new FormControl(this.article.title, [Validators.required, Validators.maxLength(25)]),
-        subtitle: new FormControl(this.article.subtitle, [Validators.required, Validators.maxLength(35)]),
-        content: new FormControl(this.article.content, [Validators.required])
-      });
-      this.articleLoaded = true;
+        this.form = new FormGroup({
+          title: new FormControl(this.article.title, [Validators.required, Validators.maxLength(25)]),
+          subtitle: new FormControl(this.article.subtitle, [Validators.required, Validators.maxLength(35)]),
+          content: new FormControl(this.article.content, [Validators.required])
+        });
+        this.articleLoaded = true;
+      },
+      error: error => {
+        this.loadFailed = true;
+        this.alertService.error(this.inferErrorMessage(error));
+      }      
     });
   }
+
+  inferErrorMessage(errResponse: HttpErrorResponse): string {
+      let message;
+      
+      if (errResponse.status == 404) {
+        message = "Article not found!";
+      } else {
+        message = `An error occurred retrieving the article.  (Status Code: ${errResponse.status})`;
+      }
+  
+      return message;
+    }
 
   onSubmit() {
     this.submitted = true;
