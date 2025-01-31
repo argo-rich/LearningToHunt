@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using LearningToHunt.EntityModels.MySQL;
 using Microsoft.AspNetCore.Authorization;
@@ -28,14 +29,19 @@ public class AccountController : ControllerBase
 {
     private readonly SignInManager<LthUser> _signInManager;
     private readonly UserManager<LthUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(SignInManager<LthUser> signInManager, UserManager<LthUser> userManager, ILogger<AccountController> logger)
+    public AccountController(SignInManager<LthUser> signInManager, 
+                             UserManager<LthUser> userManager, 
+                             RoleManager<IdentityRole> roleManager, 
+                             ILogger<AccountController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
+        _roleManager = roleManager;
     }
 
     /// <summary>
@@ -71,8 +77,9 @@ public class AccountController : ControllerBase
                 if (authCorrect)
                 {
                     await _signInManager.SignInAsync(user!, isPersistent: false, "Cookie");
+                    var rolesList = await _userManager.GetRolesAsync(user!);
 
-                    return Ok(new UserDTO(user!));
+                    return Ok(new UserDTO(user!, rolesList.ToList()));
                 }
             }         
         }

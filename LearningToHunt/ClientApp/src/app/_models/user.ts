@@ -5,5 +5,6 @@
     confirmPassword?: string;
     firstName?: string;
     lastName?: string;
+    roles?: string[]
     token?: string;
 }

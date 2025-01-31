@@ -9,6 +9,8 @@ import { FormsModule, ReactiveFormsModule, FormGroup, Validators, FormControl } 
 import {NgIf} from '@angular/common';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { DOCUMENT } from '@angular/common';
+import { User } from '@app/_models/user';
+import { AccountService } from '@app/_services/account.service';
 
 @Component({
   selector: 'app-article',
@@ -24,12 +26,16 @@ export class ArticleComponent implements OnInit, AfterViewInit {
   submitted: boolean = false;
   editMode: boolean = false;
   articleLoaded: boolean = false;
+  user?: User | null;
 
   constructor(
     private articleService: ArticleService,
     private route: ActivatedRoute,
+    private accountService: AccountService,
     @Inject(DOCUMENT) document: Document
-  ) {}
+  ) {
+    this.accountService.user.subscribe(u => this.user = u);
+  }
   
   ngOnInit(): void {
     const articleId = parseInt(this.route.snapshot.paramMap.get('articleId') || "0");
