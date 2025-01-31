@@ -48,6 +48,20 @@ export class AccountService {
     this.userSubject.next(null);
     this.router.navigate(['/account/login']);
   }
+  
+  update(params: any): Observable<object> {
+    return this.http.put(`${environment.apiBaseUrl}api/account/update`, params, {withCredentials: true})
+        .pipe(map(x => {
+            // update local storage
+            const user = { ...this.userValue, ...params };
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // publish updated user to subscribers
+            this.userSubject.next(user);
+            return x;
+        }));
+}
+
 /*
   getAll() {
       return this.http.get<User[]>(`${environment.apiBaseUrl}/users`);
@@ -55,22 +69,6 @@ export class AccountService {
 
   getById(id: string) {
       return this.http.get<User>(`${environment.apiBaseUrl}/users/${id}`);
-  }
-
-  update(id: string, params: any) {
-      return this.http.put(`${environment.apiBaseUrl}/users/${id}`, params)
-          .pipe(map(x => {
-              // update stored user if the logged in user updated their own record
-              if (id == this.userValue?.id) {
-                  // update local storage
-                  const user = { ...this.userValue, ...params };
-                  localStorage.setItem('user', JSON.stringify(user));
-
-                  // publish updated user to subscribers
-                  this.userSubject.next(user);
-              }
-              return x;
-          }));
   }
 
   delete(id: string) {

@@ -79,29 +79,52 @@ public class AccountController : ControllerBase
         return Unauthorized();
     }
 
-    [HttpPut("/update/names")]
+    /// <summary>
+    /// Updates the currently logged in user to the values passed in.
+    /// </summary>
+    /// <param name="usrUpdDto">A UserUpdateDTO object deserialized from the JSON sent by the client.</param>
+    /// <returns>204 NoContent() upon success or Problem() with a 500 status code if the update fails.</returns>
+    [HttpPut("update")]
     [Authorize]
-    public async Task<IActionResult> UpdateNames([FromBody] LthUser lthUser)
+    public async Task<IActionResult> Update([FromBody] UserUpdateDTO usrUpdDto)
     {
-        var userFromIdentity = await _userManager.GetUserAsync(User); // user here is ControllerBase.User
+        var identityUser = await _userManager.GetUserAsync(User); // this will not be null since the user will be authorized before this point
 
-        if (userFromIdentity == null)
-        {
-            return NotFound();
-        }
+        identityUser!.Email = usrUpdDto.Email;
+        identityUser.UserName = usrUpdDto.Email;
+        identityUser.FirstName = usrUpdDto.FirstName;
+        identityUser.LastName = usrUpdDto.LastName;
 
-        userFromIdentity.FirstName = lthUser.FirstName;
-        userFromIdentity.LastName = lthUser.LastName;
-
-        var result = await _userManager.UpdateAsync(userFromIdentity);
+        var result = await _userManager.UpdateAsync(identityUser);
 
         if (result.Succeeded)
         {
-            return NoContent(); // 204 No content.
+            bool resultStillSucceeded = true;      
+            if (!string.IsNullOrEmpty(usrUpdDto.Password))
+            {            
+                // verify current password
+                bool authCorrect = await _userManager.CheckPasswordAsync(identityUser, usrUpdDto.CurrentPassword!);
+                if (!authCorrect)
+                {
+                    return BadRequest("Current Password is invalid.");
+                }
+
+                // verify psswd & confirm match
+                if (!usrUpdDto.Password.Equals(usrUpdDto.ConfirmPassword))
+                {
+                    return BadRequest("Password and Confirm Password do not match.");
+                }
+
+                resultStillSucceeded = (await _userManager.ChangePasswordAsync(identityUser, usrUpdDto.CurrentPassword!, usrUpdDto.Password)).Succeeded;
+            }   
+            if (resultStillSucceeded)
+            {
+                return NoContent(); // 204 No content.
+            }         
         }
         
-        _logger.LogError("User first and last name update failed.", result.Errors.ToArray());
-
-        return Problem("User first and last name update failed.", null, 500);
+        string errorMessage = "User account update failed.";
+        _logger.LogError(errorMessage, result.Errors.ToArray());
+        return Problem(errorMessage, null, 500);
     }
 }

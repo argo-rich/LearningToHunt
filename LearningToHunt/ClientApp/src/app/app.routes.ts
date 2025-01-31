@@ -30,6 +30,10 @@ export const routes: Routes = [
         loadComponent: () => import('./account/login/login.component').then((m) => m.LoginComponent)
     },
     {
+        path: "account/update", 
+        loadComponent: () => import('./account/update-account/update-account.component').then((m) => m.UpdateAccountComponent)
+    },
+    {
         path: "blog/:blogId", 
         loadComponent: () => import('./blog/blog.component').then((m) => m.BlogComponent)
     },
