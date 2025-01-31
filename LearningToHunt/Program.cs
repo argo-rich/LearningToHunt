@@ -90,7 +90,7 @@ app.MapFallbackToFile("index.html");
 app.UseCookiePolicy(
     new CookiePolicyOptions
     {
-        Secure = app.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always
+        Secure = app.Environment.IsDevelopment() || app.Environment.IsProduction() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always
     }
 );
 
