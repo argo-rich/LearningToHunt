@@ -4,6 +4,7 @@ using LearningToHunt.EntityModels.MySQL;
 using LearningToHunt.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Rewrite;
 
 const string corsPolicyName = "allowWasmClient";
 
@@ -73,6 +74,8 @@ var app = builder.Build();
 // Map Identity routes
 app.MapCustomIdentityApi<LthUser>();
 
+// Configure the HTTP request pipeline...
+
 // if development
 if (app.Environment.IsDevelopment())
 {
@@ -87,24 +90,16 @@ if (app.Environment.IsDevelopment())
         });
     });
 }
-// Configure the HTTP request pipeline.
 else
 {
-    // redirect www.learningtohunt.com to learningtohunt.com
-    app.Use(async (context,next) =>
-    {
-        var url = context.Request.Path.Value;
-        if (url!.Contains("www.learningtohunt.com"))
-        {
-            context.Response.Redirect("https://learningtohunt.com/", permanent: true);
-        }
-        await next();
-    });
-    
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
     app.UseHttpsRedirection();
 
+    // Redirect & Rewrite
+    app.UseRewriter(new RewriteOptions()
+        // redirect www.learningtohunt.com to learningtohunt.com
+        .AddRedirectToNonWwwPermanent());
 }
 
 app.UseStaticFiles();
