@@ -90,19 +90,21 @@ if (app.Environment.IsDevelopment())
 // Configure the HTTP request pipeline.
 else
 {
+    // redirect www.learningtohunt.com to learningtohunt.com
+    app.Use(async (context,next) =>
+    {
+        var url = context.Request.Path.Value;
+        if (url!.Contains("www.learningtohunt.com"))
+        {
+            context.Response.Redirect("https://learningtohunt.com/", permanent: true);
+        }
+        await next();
+    });
+    
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
     app.UseHttpsRedirection();
 
-    app.Use(async (context,next) =>
-    {
-        var url = context.Request.Path.Value;
-        if (url!.Contains("www.learntohunt.com"))
-        {
-            context.Response.Redirect("https://learntohunt.com/", permanent: true);
-        }
-        await next();
-    });
 }
 
 app.UseStaticFiles();
