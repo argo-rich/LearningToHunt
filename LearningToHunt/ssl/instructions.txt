@@ -1,0 +1,31 @@
+TO SET UP SSL CERT USING CERTBOT IN 3 STEPS:
+
+1) Ensure DNS is pointing to the web server.  (You may need to disable SSL/HTTPS first.)
+
+2) Run the certbot command:
+$ sudo ./certbot certonly --standalone
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Please enter the domain name(s) you would like on your certificate (comma and/or
+space separated) (Enter 'c' to cancel): www.learningtohunt.com learningtohunt.com
+Requesting a certificate for www.learningtohunt.com and learningtohunt.com
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Could not bind TCP port 80 because it is already in use by another process on
+this system (such as a web server). Please stop the program in question and then
+try again.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+(R)etry/(C)ancel: R
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/www.learningtohunt.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/www.learningtohunt.com/privkey.pem
+This certificate expires on 2025-05-04.
+These files will be updated when the certificate renews.
+
+NEXT STEPS:
+- The certificate will need to be renewed before it expires. Certbot can automatically renew the 
+certificate in the background, but you may need to take steps to enable that functionality. See 
+https://certbot.org/renewal-setup for instructions.
+
+3) Convert the cert to PFX so dotnet can use it:
+sudo openssl pkcs12 -export -out /etc/letsencrypt/live/www.learningtohunt.com/fullchain.pfx -inkey /etc/letsencrypt/live/www.learningtohunt.com/privkey.pem -in /etc/letsencrypt/live/www.learningtohunt.com/fullchain.pem

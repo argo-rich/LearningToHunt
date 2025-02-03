@@ -3,6 +3,7 @@ using Swashbuckle.AspNetCore.SwaggerUI; // to use SubmitMethod
 using LearningToHunt.EntityModels.MySQL;
 using LearningToHunt.Identity;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography.X509Certificates;
 
 const string corsPolicyName = "allowWasmClient";
 
@@ -25,9 +26,26 @@ builder.Services.AddAuthorization();
 // Add other services to the container.
 builder.Services.AddControllersWithViews();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+if (builder.Environment.IsDevelopment())
+{
+    // Swagger/OpenAPI
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
+else
+{
+    // add SSL cert if not development
+    string cert = Environment.GetEnvironmentVariable("SSL_CERT_LTH")!;
+    string? word = Environment.GetEnvironmentVariable("SSL_CRT_WRD_LTH");
+    builder.WebHost.ConfigureKestrel(options =>
+        options.ConfigureEndpointDefaults(listenOptions =>
+            listenOptions.UseHttps(httpsOptions =>
+            {
+                httpsOptions.ServerCertificate = new X509Certificate2(cert, word);
+            })
+        )
+    );
+}
 
 // set up logins to expire after 20 minutes
 builder.Services.ConfigureApplicationCookie(options => 
@@ -73,10 +91,9 @@ if (app.Environment.IsDevelopment())
 else
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    //app.UseHsts();    
+    app.UseHsts();
+    app.UseHttpsRedirection();
 }
-
-//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
