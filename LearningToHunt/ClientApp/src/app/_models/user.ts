@@ -5,6 +5,7 @@
     confirmPassword?: string;
     firstName?: string;
     lastName?: string;
+    emailConfirmed?: boolean;
     roles?: string[]
     token?: string;
 }

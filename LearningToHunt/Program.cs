@@ -50,9 +50,9 @@ else
     );
 }
 
-// // set up email sender
-// builder.Services.AddTransient<IEmailSender, LthEmailSender>();
-// builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+// set up email sender
+builder.Services.AddTransient<IEmailSender, LthEmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 // set up logins to expire after 20 minutes
 builder.Services.ConfigureApplicationCookie(options => 

@@ -12,6 +12,7 @@ public class UserDTO
         this.Email = user.Email;
         this.FirstName = user.FirstName;
         this.LastName = user.LastName;
+        this.EmailConfirmed = user.EmailConfirmed;
         this.Roles = roles;
     }
 
@@ -23,6 +24,8 @@ public class UserDTO
     public string? FirstName { get; set;}
     
     public string? LastName { get; set;}
+
+    public bool? EmailConfirmed { get; set;}
 
     public List<string> Roles { get; set;} = new List<string>();
 }

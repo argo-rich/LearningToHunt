@@ -7,9 +7,9 @@ namespace LearningToHunt.Services.Email;
 public class LthEmailSender : IEmailSender
 {
     private readonly ILogger<LthEmailSender> _logger;
-    private const string FromAddress = "Rich Argo <rich@argohaus.com>";
-    private const string MessageStream = "learningtohunt-transactional";
-    private const string ServerToken = "";
+    private const string FromAddress = "no-reply@learningtohunt.com";
+    private string MessageStream = Environment.GetEnvironmentVariable("PSTMRK_STREAM")!;
+    private string ServerToken = Environment.GetEnvironmentVariable("PSTMRK_TOKEN")!;
 
     public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
 
@@ -29,9 +29,7 @@ public class LthEmailSender : IEmailSender
             TrackOpens = false,
             Subject = subject,
             HtmlBody = htmlMessage,
-            MessageStream = MessageStream,
-            //Tag = "New Year's Email Campaign",
-            //Headers = new HeaderCollection(new MailHeader("X-CUSTOM-HEADER", "Header content"))
+            MessageStream = MessageStream
         };
 
         var client = new PostmarkClient(ServerToken);

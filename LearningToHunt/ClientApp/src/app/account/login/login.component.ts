@@ -64,9 +64,25 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (user) => {
           this.status = HttpRequestStatus.Successful;
-          // get return url from query parameters or default to home page
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-          this.router.navigateByUrl(returnUrl);
+
+          if (user.emailConfirmed) {
+            // get return url from query parameters or default to home page
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+            this.router.navigateByUrl(returnUrl);
+          } else {
+            this.accountService.logout().subscribe({
+              next: (user) => {
+                this.accountService.removeUser();
+              },
+              error: error => {
+                  // Ff error.status === 401 it just means the user was already logged out on the server 
+                  // side.  Any other error is not good, but we still want to log the user out on the client side.
+                  this.accountService.removeUser();
+              }
+              
+          });
+            this.alertService.error("Please confirm your email by clicking the link in the confirmation email received from <br> no-reply@learningtohunt.com. <br> <br> You may need to check your spam folder.");
+          }
         },
         error: error => {
           this.status = HttpRequestStatus.Failed;
