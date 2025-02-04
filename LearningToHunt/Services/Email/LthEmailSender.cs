@@ -9,7 +9,7 @@ public class LthEmailSender : IEmailSender
     private readonly ILogger<LthEmailSender> _logger;
     private const string FromAddress = "Rich Argo <rich@argohaus.com>";
     private const string MessageStream = "learningtohunt-transactional";
-    private const string ServerToken = "8c7d0e64-1e6b-499c-aab9-66ec903cc8bb";
+    private const string ServerToken = "";
 
     public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
 
