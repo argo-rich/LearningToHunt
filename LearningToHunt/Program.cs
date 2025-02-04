@@ -5,6 +5,8 @@ using LearningToHunt.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using LearningToHunt.Services.Email;
 
 const string corsPolicyName = "allowWasmClient";
 
@@ -47,6 +49,10 @@ else
         )
     );
 }
+
+// // set up email sender
+// builder.Services.AddTransient<IEmailSender, LthEmailSender>();
+// builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 // set up logins to expire after 20 minutes
 builder.Services.ConfigureApplicationCookie(options => 

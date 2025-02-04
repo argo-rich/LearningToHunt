@@ -89,9 +89,13 @@ export class RegisterComponent implements OnInit {
   }
     
   inferErrorMessage(errResponse: HttpErrorResponse): string {
+    if (errResponse.status === 500){
+      return "We're sorry!  A server side error occurred, probably related to sending your email confirmation.  We are looking into it.";
+    }      
+    
     let message = "";
     let count = 0;
-    
+
     for (let key in errResponse.error.errors) {
       message = errResponse.error.errors[key];
       if (++count > 1) {

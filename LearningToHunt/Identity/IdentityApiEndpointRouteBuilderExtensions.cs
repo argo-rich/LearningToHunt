@@ -168,7 +168,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             return TypedResults.SignIn(newPrincipal, authenticationScheme: IdentityConstants.BearerScheme);
         });
 
-        routeGroup.MapGet("/confirmEmail", async Task<Results<ContentHttpResult, UnauthorizedHttpResult>>
+        routeGroup.MapGet("/confirmEmail", async Task<Results<RedirectHttpResult, UnauthorizedHttpResult>>
             ([FromQuery] string userId, [FromQuery] string code, [FromQuery] string? changedEmail, [FromServices] IServiceProvider sp) =>
         {
             var userManager = sp.GetRequiredService<UserManager<TUser>>();
@@ -205,12 +205,21 @@ public static class IdentityApiEndpointRouteBuilderExtensions
                 }
             }
 
-            if (!result.Succeeded)
+            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!;
+            bool isDevelopment = environment == Environments.Development;
+            string redirectPrepend = (isDevelopment) ? "http://localhost:4200" : "";
+
+            if (result.Succeeded)
             {
-                return TypedResults.Unauthorized();
+                
+                return TypedResults.Redirect($"{redirectPrepend}/account/confirmation/success");
+            }
+            else
+            {
+                return TypedResults.Redirect($"{redirectPrepend}/account/confirmation/failure");
             }
 
-            return TypedResults.Text("Thank you for confirming your email.");
+            //return TypedResults.Text("Thank you for confirming your email.");            
         })
         .Add(endpointBuilder =>
         {

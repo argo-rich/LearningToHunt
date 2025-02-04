@@ -26,6 +26,10 @@ export const routes: Routes = [
         loadComponent: () => import('./account/register/register.component').then((m) => m.RegisterComponent)
     },
     {
+        path: "account/confirmation/:confirmationStatus", 
+        loadComponent: () => import('./account/confirmation/confirmation.component').then((m) => m.ConfirmationComponent)
+    },
+    {
         path: "account/login", 
         loadComponent: () => import('./account/login/login.component').then((m) => m.LoginComponent)
     },
