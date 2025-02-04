@@ -25,6 +25,12 @@ class MockAccountService {
   login(email: string, password: string): Observable<User> {
     return (email !== "bad-email") ? of({}) : throwError(() => loginError);
   }
+
+  logout(): Observable<object> {
+    return of({});      
+  }
+
+  removeUser() { }
 }
 
 const mockActivatedRoute = {
