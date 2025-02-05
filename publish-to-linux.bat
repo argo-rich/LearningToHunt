@@ -1,7 +1,7 @@
 REM Run the dotnet publish command and create publish.tar.bz2
 cd LearningToHunt
 dotnet clean
-rmdir publish -Recurse
+rmdir /S /Q publish
 dotnet publish -o publish --os linux
 cd publish
 tar cjvf ..\publish.tar.bz2 .
