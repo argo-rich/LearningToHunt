@@ -9,6 +9,7 @@ import { AlertService } from '../../_services/alert.service';
 import { HttpRequestStatus } from '@app/_models/http-request-status';
 import { User } from '@app/_models/user';
 import { HttpErrorResponse } from '@angular/common/http';
+import { environment } from 'environments/environment';
 
 @Component({ 
   imports: [FormsModule, ReactiveFormsModule, NgIf, NgClass],
@@ -81,7 +82,7 @@ export class LoginComponent implements OnInit {
               }
               
           });
-            this.alertService.error("Please confirm your email by clicking the link in the confirmation email received from <br> no-reply@learningtohunt.com. <br> <br> You may need to check your spam folder.");
+            this.alertService.error(`Please confirm your email by clicking the link in the confirmation email received from <br> ${environment.replyEmail}. <br> <br> You may need to check your spam folder.`);
           }
         },
         error: error => {
