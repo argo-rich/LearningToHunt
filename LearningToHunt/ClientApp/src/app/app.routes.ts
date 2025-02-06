@@ -1,5 +1,6 @@
 // default
 import { Routes } from '@angular/router';
+import { PageNotFoundComponent } from './_components/page-not-found.component';
 
 // added
 
@@ -52,5 +53,6 @@ export const routes: Routes = [
     {
         path: "privacy", 
         loadComponent: () => import('./privacy/privacy.component').then((m) => m.PrivacyComponent)
-    }
+    },
+    { path: '**', component: PageNotFoundComponent }
 ];
