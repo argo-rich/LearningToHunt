@@ -154,4 +154,16 @@ public class AccountController : ControllerBase
         _logger.LogError(errorMessage, result!.Errors.ToArray());
         return Problem(errorMessage, null, 500);
     }
+
+    /// <summary>
+    /// Handles client side pings to keep the session alive.  Since it is decorated with the 
+    // [Authorize] attribute, the client must be logged in to receive a 200 OK response.
+    /// </summary>
+    /// <returns>200 OK if the user is currently logged in.  Otherwise 401 Unathorized.</returns>
+    [HttpGet("ping")]
+    [Authorize]
+    public IActionResult Ping()
+    {
+        return Ok();
+    }
 }

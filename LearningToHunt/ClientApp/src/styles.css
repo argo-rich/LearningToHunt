@@ -22,3 +22,7 @@
 .anchor-links {
   padding-bottom: 4%;
 }
+
+.display-block {
+  display: block !important;
+}

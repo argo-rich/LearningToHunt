@@ -60,7 +60,11 @@ export class AccountService {
             this.userSubject.next(user);
             return x;
         }));
-}
+  }
+
+  ping(): Observable<object> {
+    return this.http.get(`${environment.apiBaseUrl}api/account/ping`, {withCredentials: true});      
+  }
 
 /*
   getAll() {

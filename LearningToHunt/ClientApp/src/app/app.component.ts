@@ -1,37 +1,133 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { DatePipe, NgIf } from '@angular/common';
 import { AlertComponent } from './_components/alert.component';
 import { User } from './_models/user';
 import { AccountService } from './_services/account.service';
+import { Idle, DEFAULT_INTERRUPTSOURCES, EventTargetInterruptSource } from '@ng-idle/core';
+import { Keepalive } from '@ng-idle/keepalive';
+import { environment } from 'environments/environment';
+import { ModalDirective, ModalModule } from 'ngx-bootstrap/modal';
+import { AlertService } from './_services/alert.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, DatePipe, AlertComponent, NgIf],
+  imports: [RouterOutlet, RouterLink, DatePipe, AlertComponent, NgIf, ModalModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   standalone: true
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   title = 'ClientApp';
   currDate = Date.now();
   user?: User | null;
 
-  constructor(private accountService: AccountService) {
-    this.accountService.user.subscribe(u => this.user = u);
+  // session timeout vars
+  idleState = 'Not started.';
+  timedOut = false;
+  lastPing!: Date;
+
+ @ViewChild('childModal', { static: false }) childModal!: ModalDirective;
+
+ @ViewChild('stayButton', { static: false }) stayButton!: ElementRef<HTMLButtonElement>;
+
+  constructor(
+    private accountService: AccountService, 
+    private alertService: AlertService,
+    private idle: Idle, 
+    private keepalive: Keepalive
+  ) {    
+    // sets the idle timeout (i.e.: the amount of idle time before we want to prompt the user)
+    idle.setIdle(environment.idleTimeout);
+    // sets a timeout period on top of the idle timeout that the user will be considered timed out
+    idle.setTimeout(environment.totalSessionTimeout - environment.idleTimeout);
+    // sets the default interrupts, in this case, things like clicks, scrolls, touches to the document
+    idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
+
+    idle.onIdleEnd.subscribe(() => {
+      if (!this.childModal || !this.childModal.isShown) {
+        this.idleState = 'No longer idle.'
+        this.reset();
+      }
+    });
+    
+    idle.onTimeout.subscribe(() => {
+      this.idleState = 'Timed out!';
+      this.timedOut = true;
+      this.logout("You have been logged out due to inactivity.");
+    });
+    
+    idle.onIdleStart.subscribe(() => {
+      this.idleState = 'Idle has started.'
+      this.childModal.show();
+    });
+    
+    idle.onTimeoutWarning.subscribe((countdown) => {
+      let minutes = Math.floor(countdown / 60);
+      let seconds = Math.abs((minutes * 60 ) - countdown);
+      this.idleState = `You will be automatically logged out in ${minutes} minute(s), ${seconds} seconds!`;
+      let source = new EventTargetInterruptSource(this.stayButton.nativeElement, 'click');
+      idle.setInterrupts([source]);
+    });
+
+    // sets the ping interval to 10 minutes
+    this.keepalive.interval(environment.pingInterval);
+
+    this.keepalive.onPing.subscribe(() => {
+      this.accountService.ping().subscribe({
+          next: (user) => {
+            this.lastPing = new Date();
+          },
+          error: error => {
+              // if error.status === 401 the user was already logged out on the server, logging them out here too
+              if (error.status === 401) {
+                this.logout();
+              }
+          }          
+      });        
+    });
+    
+    this.accountService.user.subscribe(u => {
+      this.user = u;
+      if (this.user) {
+        idle.watch()
+        this.timedOut = false;
+      } else {
+        idle.stop();
+      }
+    });
   }
 
-  logout() {
-    this.accountService.logout().subscribe({
-      next: (user) => {
-        this.accountService.removeUser();
-      },
-      error: error => {
-          // Ff error.status === 401 it just means the user was already logged out on the server 
-          // side.  Any other error is not good, but we still want to log the user out on the client side.
-          this.accountService.removeUser();
-      }
-      
-  });
+  ngAfterViewInit(): void {
+    this.childModal.config = {
+      backdrop: 'static',
+      keyboard: false
+    };
+  }
+
+  /**
+   * Resets the idle timer
+   */
+  reset() {
+    if (!this.childModal || !this.childModal.isShown) {
+      this.idle.watch();
+      this.idleState = 'Started.';
+      this.timedOut = false;
+    }
+  }
+
+  stay() {
+    this.idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
+    this.childModal.hide();
+    this.reset();
+  }
+
+  logout(msg?: string) {
+    this.childModal.hide();
+    this.accountService.logout().subscribe(() =>{
+      this.accountService.removeUser();
+      this.user = null;
+      this.alertService.warn(msg || "You have been logged out.");
+    });
   }
 }
