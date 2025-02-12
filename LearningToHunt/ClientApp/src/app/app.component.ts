@@ -24,7 +24,6 @@ export class AppComponent implements AfterViewInit {
 
   // session timeout vars
   idleState = 'Not started.';
-  timedOut = false;
   lastPing!: Date;
 
  @ViewChild('childModal', { static: false }) childModal!: ModalDirective;
@@ -53,7 +52,6 @@ export class AppComponent implements AfterViewInit {
     
     idle.onTimeout.subscribe(() => {
       this.idleState = 'Timed out!';
-      this.timedOut = true;
       this.logout("You have been logged out due to inactivity.");
     });
     
@@ -70,7 +68,6 @@ export class AppComponent implements AfterViewInit {
       idle.setInterrupts([source]);
     });
 
-    // sets the ping interval to 10 minutes
     this.keepalive.interval(environment.pingInterval);
 
     this.keepalive.onPing.subscribe(() => {
@@ -90,10 +87,11 @@ export class AppComponent implements AfterViewInit {
     this.accountService.user.subscribe(u => {
       this.user = u;
       if (this.user) {
-        idle.watch()
-        this.timedOut = false;
+        idle.watch();
+        keepalive.start();
       } else {
         idle.stop();
+        keepalive.stop();
       }
     });
   }
@@ -112,7 +110,6 @@ export class AppComponent implements AfterViewInit {
     if (!this.childModal || !this.childModal.isShown) {
       this.idle.watch();
       this.idleState = 'Started.';
-      this.timedOut = false;
     }
   }
 
