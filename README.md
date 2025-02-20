@@ -14,7 +14,7 @@ first/last names).
 
 ### Notes of Interest
 One interesting tidbit on the article editing is that Angular was stripping out element ID's when saving article
-content.  This is for security purposes, but does not allow for anchor links in articles to work.  To get around 
+content.  This is for security purposes, but does not allow for anchor links to work.  To get around 
 this, I ended up adding a placeholder div to the content with a class="anchor-links" which I then dynamically
 add anchor links to at runtime by searching for all H2's with a class of anchor-point and adding anchor links
 for each.
