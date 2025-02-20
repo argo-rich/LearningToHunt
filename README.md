@@ -24,4 +24,4 @@ The following is planned:
 - Forgotten password functionality.
 - Ability for Admins to create an article from scratch.
 - Ability for users to add comments to articles.
-- Ability for Admins to create new articles from scratch.
+- Create additional article content
