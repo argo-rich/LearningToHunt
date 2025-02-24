@@ -1,8 +1,7 @@
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
 using LearningToHunt.EntityModels.MySQL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearningToHunt.Identity;
@@ -33,15 +32,19 @@ public class AccountController : ControllerBase
 
     private readonly ILogger<AccountController> _logger;
 
+    private readonly IEmailSender _emailSender;
+
     public AccountController(SignInManager<LthUser> signInManager, 
                              UserManager<LthUser> userManager, 
                              RoleManager<IdentityRole> roleManager, 
-                             ILogger<AccountController> logger)
+                             ILogger<AccountController> logger,
+                             IEmailSender emailSender)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
         _roleManager = roleManager;
+        _emailSender = emailSender;
     }
 
     /// <summary>
@@ -82,6 +85,30 @@ public class AccountController : ControllerBase
                     return Ok(new UserDTO(user!, rolesList.ToList()));
                 }
             }         
+        }
+        return Unauthorized();
+    }
+
+    /// <summary>
+    /// Handles obtaining the needed reset code and token for a user to reset their password.
+    /// </summary>
+    /// <param name="email">Email address/username</param>
+    /// <returns>The Task that represents the asynchronous operation, containing a ResetTokensDTO 
+    /// containing the reset code and token for a user to reset their password.</returns>
+    /// 
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] EmailDTO emailDTO)
+    {
+        if (emailDTO != null)
+        {
+            LthUser? user = await _userManager.FindByEmailAsync(emailDTO.Email!);
+            if (user != null)
+            {
+                int resetCode = new Random().Next(100000, 1000000);
+                string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                await _emailSender.SendEmailAsync(user.Email!, "Password Reset Code", $"Your password reset code is: {resetCode}");
+                return Ok(new ResetTokensDTO(resetCode, token));
+            }
         }
         return Unauthorized();
     }

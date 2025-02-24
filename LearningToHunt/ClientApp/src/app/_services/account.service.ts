@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
+import { ResetToken } from '@app/_models/reset-token';
 
 @Injectable({
   providedIn: 'root'
@@ -64,6 +65,23 @@ export class AccountService {
 
   ping(): Observable<object> {
     return this.http.get(`${environment.apiBaseUrl}api/account/ping`, {withCredentials: true});      
+  }
+
+  forgotPassword(email: string): Observable<ResetToken> {
+    return this.http.post<ResetToken>(`${environment.apiBaseUrl}api/account/forgot-password`, { email });
+  }
+
+  updateForgottenPassword(params: any): Observable<object> {
+    return this.http.post(`${environment.apiBaseUrl}resetPassword`, params)
+        .pipe(map(x => {
+            // update local storage
+            const user = { ...this.userValue, ...params };
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // publish updated user to subscribers
+            this.userSubject.next(user);
+            return x;
+        }));
   }
 
 /*

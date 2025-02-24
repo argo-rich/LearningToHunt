@@ -3,7 +3,7 @@
     <div class="card-body">
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="mb-3">
-                <label class="form-label">Username</label>
+                <label class="form-label">Email</label>
                 <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && email?.errors }" />
                 <div *ngIf="submitted && email?.errors" class="invalid-feedback">
                     <div *ngIf="email?.hasError('required')">Email is required</div>
@@ -21,7 +21,7 @@
                     <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
                     Login
                 </button>
-                <a href="account/register" class="btn btn-link">Register</a>
+                <a href="account/forgot-password" class="btn btn-link">Forgot Password</a>
             </div>
         </form>
     </div>
