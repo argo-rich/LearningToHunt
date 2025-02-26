@@ -10,7 +10,7 @@ role, then while viewing an article, an "Edit" link displays allowing the user t
 
 Users can register for an account and receive an email confirmation containing a link to confirm their email.
 Once this link is clicked, the user can log in.  Users can also update their account (email, password, 
-first/last names).
+first/last names) and use the forgotten password functionality if needed.
 
 ### Notes of Interest
 One interesting tidbit on the article editing is that Angular was stripping out element ID's when saving article
@@ -21,7 +21,6 @@ for each.
 
 ## Future Functionality
 The following is planned:
-- Forgotten password functionality.
 - Ability for Admins to create an article from scratch.
 - Ability for users to add comments to articles.
 - Create additional article content
