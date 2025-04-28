@@ -27,9 +27,4 @@ public class Article
     [Required]
     public int? AuthorId { get; set; }
 
-    [Column("create_date", TypeName = "datetime")]
-    public DateTime? CreateDate { get; set; }
-
-    [Column("modify_date", TypeName = "datetime")]
-    public DateTime? ModifyDate { get; set; }
 }
