@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    apiBaseUrl: "https://learningtohunt.com/",
+    apiBaseUrl: "https://dotnet.learningtohunt.com/",
     replyEmail: "no-reply@learningtohunt.com",
     idleTimeout: 1080, // 18 minutes
     totalSessionTimeout: 1200, // 20 minutes
